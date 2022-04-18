@@ -23,8 +23,7 @@ namespace Information_networks
         }
 
         private void initButtonClick(object sender, EventArgs e)
-        {
-            // Set visible TBoxes
+        {   
             loginTextBox.Visible = true;
             passwordTextBox.Visible = true;
             serverAdressTextBox.Visible = true;
@@ -33,28 +32,36 @@ namespace Information_networks
 
         private void openSessionButtonClick(object sender, EventArgs e)
         {
-            // Get host and port from TBoxes
-            host = serverAdressTextBox.Text;
-            port = serverPortTextBox.Text;
-            connString = String.Format(
-                "Server={0}; Username={1}; Database={2}; Port={3}; Password={4}; SSLMode=Prefer",
-                host,
-                user,
-                dbName,
-                port,
-                password);
-            // Connect to DB
-            conn = new NpgsqlConnection(connString);
-            conn.Open();
-            connectionLabel.Text = "Подключено";
-            connectionLabel.ForeColor = Color.Green;
-            executeButton.Visible = true;
-            // Execute INSERT in PGSQL
-            using (var command = new NpgsqlCommand("INSERT INTO users(username, password) VALUES(@u, @p)", conn))
+            if (!String.IsNullOrEmpty(loginTextBox.Text) && !String.IsNullOrEmpty(passwordTextBox.Text)) 
             {
-                command.Parameters.AddWithValue("u", loginTextBox.Text);
-                command.Parameters.AddWithValue("p", passwordTextBox.Text);
-                command.ExecuteNonQuery();
+                incorrectFields.Visible = false;
+                host = serverAdressTextBox.Text;
+                port = serverPortTextBox.Text;
+                connString = String.Format(
+                    "Server={0}; Username={1}; Database={2}; Port={3}; Password={4}; SSLMode=Prefer",
+                    host,
+                    user,
+                    dbName,
+                    port,
+                    password);
+                // Connect to DB
+                conn = new NpgsqlConnection(connString);
+                conn.Open();
+                connectionLabel.Text = "Подключено";
+                connectionLabel.ForeColor = Color.Green;
+                executeButton.Visible = true;
+                // Execute INSERT in PGSQL
+                using (NpgsqlCommand command = new NpgsqlCommand("INSERT INTO users(username, password)\n" +
+                                                        "VALUES(@u, @p)", conn))
+                {
+                    command.Parameters.AddWithValue("u", loginTextBox.Text);
+                    command.Parameters.AddWithValue("p", passwordTextBox.Text);
+                    command.ExecuteNonQuery();
+                }
+            }
+            else
+            {
+                incorrectFields.Visible = true;
             }
         }
 
