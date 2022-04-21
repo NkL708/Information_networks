@@ -35,18 +35,21 @@
             this.connectionLabel = new System.Windows.Forms.Label();
             this.incorrectFields = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.richTextBox = new System.Windows.Forms.RichTextBox();
+            this.tableView = new System.Windows.Forms.RichTextBox();
             this.showUsersButton = new System.Windows.Forms.Button();
-            this.dataGridView = new System.Windows.Forms.DataGridView();
+            this.gridView = new System.Windows.Forms.DataGridView();
             this.insertButton = new System.Windows.Forms.Button();
             this.deleteButton = new System.Windows.Forms.Button();
             this.showFunctionsButton = new System.Windows.Forms.Button();
+            this.executeSqlButton = new System.Windows.Forms.Button();
+            this.sqlText = new System.Windows.Forms.RichTextBox();
             this.passwordTextBox = new CueTextBox();
             this.serverPortTextBox = new CueTextBox();
             this.serverAdressTextBox = new CueTextBox();
             this.loginTextBox = new CueTextBox();
+            this.updateDBButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridView)).BeginInit();
             this.SuspendLayout();
             // 
             // initButton
@@ -128,13 +131,13 @@
             this.pictureBox1.TabIndex = 14;
             this.pictureBox1.TabStop = false;
             // 
-            // richTextBox
+            // tableView
             // 
-            this.richTextBox.Location = new System.Drawing.Point(22, 243);
-            this.richTextBox.Name = "richTextBox";
-            this.richTextBox.Size = new System.Drawing.Size(270, 151);
-            this.richTextBox.TabIndex = 15;
-            this.richTextBox.Text = "";
+            this.tableView.Location = new System.Drawing.Point(22, 243);
+            this.tableView.Name = "tableView";
+            this.tableView.Size = new System.Drawing.Size(270, 151);
+            this.tableView.TabIndex = 15;
+            this.tableView.Text = "";
             // 
             // showUsersButton
             // 
@@ -148,14 +151,14 @@
             this.showUsersButton.UseVisualStyleBackColor = false;
             this.showUsersButton.Click += new System.EventHandler(this.ViewButton_Click);
             // 
-            // dataGridView
+            // gridView
             // 
-            this.dataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
-            this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView.Location = new System.Drawing.Point(315, 243);
-            this.dataGridView.Name = "dataGridView";
-            this.dataGridView.Size = new System.Drawing.Size(240, 150);
-            this.dataGridView.TabIndex = 18;
+            this.gridView.BackgroundColor = System.Drawing.SystemColors.Window;
+            this.gridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridView.Location = new System.Drawing.Point(315, 243);
+            this.gridView.Name = "gridView";
+            this.gridView.Size = new System.Drawing.Size(426, 150);
+            this.gridView.TabIndex = 18;
             // 
             // insertButton
             // 
@@ -187,11 +190,31 @@
             this.showFunctionsButton.Enabled = false;
             this.showFunctionsButton.Location = new System.Drawing.Point(315, 214);
             this.showFunctionsButton.Name = "showFunctionsButton";
-            this.showFunctionsButton.Size = new System.Drawing.Size(87, 23);
+            this.showFunctionsButton.Size = new System.Drawing.Size(118, 23);
             this.showFunctionsButton.TabIndex = 21;
-            this.showFunctionsButton.Text = "Просмотр";
+            this.showFunctionsButton.Text = "Просмотр функций";
             this.showFunctionsButton.UseVisualStyleBackColor = false;
             this.showFunctionsButton.Click += new System.EventHandler(this.ShowFunctionsButtonClick);
+            // 
+            // executeSqlButton
+            // 
+            this.executeSqlButton.BackColor = System.Drawing.Color.Lime;
+            this.executeSqlButton.Enabled = false;
+            this.executeSqlButton.Location = new System.Drawing.Point(583, 18);
+            this.executeSqlButton.Name = "executeSqlButton";
+            this.executeSqlButton.Size = new System.Drawing.Size(107, 23);
+            this.executeSqlButton.TabIndex = 22;
+            this.executeSqlButton.Text = "Выполнить";
+            this.executeSqlButton.UseVisualStyleBackColor = false;
+            this.executeSqlButton.Click += new System.EventHandler(this.ExecuteSqlButtonClick);
+            // 
+            // sqlText
+            // 
+            this.sqlText.Location = new System.Drawing.Point(583, 63);
+            this.sqlText.Name = "sqlText";
+            this.sqlText.Size = new System.Drawing.Size(158, 150);
+            this.sqlText.TabIndex = 23;
+            this.sqlText.Text = "";
             // 
             // passwordTextBox
             // 
@@ -232,18 +255,33 @@
             this.loginTextBox.Size = new System.Drawing.Size(130, 20);
             this.loginTextBox.TabIndex = 4;
             // 
+            // updateDBButton
+            // 
+            this.updateDBButton.BackColor = System.Drawing.Color.Lime;
+            this.updateDBButton.Enabled = false;
+            this.updateDBButton.Location = new System.Drawing.Point(452, 214);
+            this.updateDBButton.Name = "updateDBButton";
+            this.updateDBButton.Size = new System.Drawing.Size(103, 23);
+            this.updateDBButton.TabIndex = 24;
+            this.updateDBButton.Text = "Обновить БД";
+            this.updateDBButton.UseVisualStyleBackColor = false;
+            this.updateDBButton.Click += new System.EventHandler(this.UpdateDBButtonClick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Aqua;
             this.ClientSize = new System.Drawing.Size(753, 406);
+            this.Controls.Add(this.updateDBButton);
+            this.Controls.Add(this.sqlText);
+            this.Controls.Add(this.executeSqlButton);
             this.Controls.Add(this.showFunctionsButton);
             this.Controls.Add(this.deleteButton);
             this.Controls.Add(this.insertButton);
-            this.Controls.Add(this.dataGridView);
+            this.Controls.Add(this.gridView);
             this.Controls.Add(this.showUsersButton);
-            this.Controls.Add(this.richTextBox);
+            this.Controls.Add(this.tableView);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.incorrectFields);
             this.Controls.Add(this.passwordTextBox);
@@ -259,7 +297,7 @@
             this.Name = "Form1";
             this.Text = "Джавы-джуны";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -278,12 +316,15 @@
         private CueTextBox passwordTextBox;
         private System.Windows.Forms.Label incorrectFields;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.RichTextBox richTextBox;
+        private System.Windows.Forms.RichTextBox tableView;
         private System.Windows.Forms.Button showUsersButton;
-        private System.Windows.Forms.DataGridView dataGridView;
+        private System.Windows.Forms.DataGridView gridView;
         private System.Windows.Forms.Button insertButton;
         private System.Windows.Forms.Button deleteButton;
         private System.Windows.Forms.Button showFunctionsButton;
+        private System.Windows.Forms.Button executeSqlButton;
+        private System.Windows.Forms.RichTextBox sqlText;
+        private System.Windows.Forms.Button updateDBButton;
     }
 }
 

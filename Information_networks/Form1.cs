@@ -2,6 +2,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Data;
 
 namespace Information_networks
 {
@@ -9,7 +10,7 @@ namespace Information_networks
     {
         private static string host;
         private static readonly string user = "postgres";
-        private static readonly string dbName = "InformationNetworks";
+        private static readonly string dbName = "Information_networks";
         private static string port;
         private static readonly string password = "hugelong123";
         private static string connString;
@@ -50,6 +51,8 @@ namespace Information_networks
             insertButton.Enabled = true;
             deleteButton.Enabled = true;
             showFunctionsButton.Enabled = true;
+            executeSqlButton.Enabled = true;
+            updateDBButton.Enabled = true;
         }
 
         private void CloseSessionButtonClick(object sender, EventArgs e)
@@ -71,8 +74,8 @@ namespace Information_networks
 
         private void ViewButton_Click(object sender, EventArgs e)
         {
-            richTextBox.Clear();
-            richTextBox.Text += "id\t username\t password\n";
+            tableView.Clear();
+            tableView.Text += "id\t username\t password\n";
             using (NpgsqlCommand command = new NpgsqlCommand(
                 "SELECT * FROM users;", con)) 
             {
@@ -82,7 +85,7 @@ namespace Information_networks
                     {
                         String user = reader[0].ToString() + "\t" +
                             reader[1].ToString() + "\t\t" + reader[2].ToString() + "\n";
-                        richTextBox.Text += user;
+                        tableView.Text += user;
                     }
                 }
             }
@@ -126,20 +129,52 @@ namespace Information_networks
 
         private void ShowFunctionsButtonClick(object sender, EventArgs e)
         {
-            using (NpgsqlCommand command = new NpgsqlCommand(
+            using (NpgsqlDataAdapter adapter = new NpgsqlDataAdapter(
                 "SELECT routine_name\n" +
                 "FROM information_schema.routines\n" +
                 "WHERE routine_type = 'FUNCTION'\n" +
                 "AND specific_schema = 'public';", con))
             {
-                using (NpgsqlDataReader reader = command.ExecuteReader())
+                DataTable dataTable = new DataTable();
+                adapter.Fill(dataTable);
+                gridView.DataSource = dataTable;
+            }
+        }
+
+        private void ExecuteSqlButtonClick(object sender, EventArgs e)
+        {
+            using (NpgsqlDataAdapter dataAdapter = new NpgsqlDataAdapter(sqlText.Text, con))
+            {   
+                DataTable dataTable = new DataTable();
+                dataAdapter.Fill(dataTable);
+                gridView.DataSource = dataTable;
+            }
+        }
+
+        private void UpdateDBButtonClick(object sender, EventArgs e)
+        {   
+            DataTable dataTable = (DataTable) gridView.DataSource;
+            DataTable modifiedElements = new DataTable();
+            foreach(DataRow row in dataTable.Rows) 
+            {
+                using (NpgsqlCommand command = new NpgsqlCommand(
+                    "INSERT INTO users(id, username, password)" +
+                    "VALUES(@i, @u, @p);", con))
                 {
-                    dataGridView.ColumnCount = 1;
-                    dataGridView.Columns[0].Name = "Function";
-                    while (reader.Read())
+                    command.Parameters.AddWithValue("i", row[0]);
+                    command.Parameters.AddWithValue("u", row[1]);
+                    command.Parameters.AddWithValue("p", row[2]);
+                    try
                     {
-                        String function = reader[0].ToString();
-                        dataGridView.Rows.Add(function);
+                        command.ExecuteNonQuery();
+                        //DataRow modifiedRow = new DataRow(row[0], row[1], row[2]);
+                        //modifiedElements.Rows.Add(modifiedRow);
+                    }
+                    // If already in DB
+                    catch (NpgsqlException) { }
+                    finally
+                    {
+                        gridView.DataSource = modifiedElements;
                     }
                 }
             }
