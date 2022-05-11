@@ -3,15 +3,16 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Data;
+using System.Diagnostics;
 
 namespace Information_networks
 {
     public partial class Form1 : Form
     {
-        private static string host;
+        private static string host = "localhost";
         private static readonly string user = "postgres";
-        private static readonly string dbName = "Information_networks";
-        private static string port;
+        private static string dbName = "InformationNetworks";
+        private static string port = "5432";
         private static readonly string password = "hugelong123";
         private static string connString;
         private static NpgsqlConnection con;
@@ -33,18 +34,12 @@ namespace Information_networks
         {
             host = serverAdressTextBox.Text;
             port = serverPortTextBox.Text;
-            connString = String.Format(
-                "Server={0}; Username={1}; Database={2}; Port={3}; Password={4}; SSLMode=Prefer",
-                host,
-                user,
-                dbName,
-                port,
-                password);
+            connString = $"Server={host}; Username={user}; Database={dbName}; Port={port}; Password={password}; SSLMode=Prefer";
             con = new NpgsqlConnection(connString);
             con.Open();
+            FillTreeView();
             connectionLabel.Text = "Подключено";
             connectionLabel.ForeColor = Color.Green;
-            executeButton.Enabled = true;
             showUsersButton.Enabled = true;
             loginTextBox.Enabled = true;
             passwordTextBox.Enabled = true;
@@ -59,7 +54,6 @@ namespace Information_networks
         {
             // Close connection
             con.Close();
-            executeButton.Enabled = false;
             showUsersButton.Enabled = false;
             loginTextBox.Enabled = false;
             passwordTextBox.Enabled = false;
@@ -72,21 +66,19 @@ namespace Information_networks
             // What is here?
         }
 
-        private void ViewButton_Click(object sender, EventArgs e)
+        private void ViewButtonClick(object sender, EventArgs e)
         {
             tableView.Clear();
             tableView.Text += "id\t username\t password\n";
             using (NpgsqlCommand command = new NpgsqlCommand(
                 "SELECT * FROM users;", con)) 
+            using (NpgsqlDataReader reader = command.ExecuteReader())
             {
-                using (NpgsqlDataReader reader = command.ExecuteReader())
+                while (reader.Read())
                 {
-                    while (reader.Read())
-                    {
-                        String user = reader[0].ToString() + "\t" +
-                            reader[1].ToString() + "\t\t" + reader[2].ToString() + "\n";
-                        tableView.Text += user;
-                    }
+                    String user = reader[0].ToString() + "\t" +
+                        reader[1].ToString() + "\t\t" + reader[2].ToString() + "\n";
+                    tableView.Text += user;
                 }
             }
         }
@@ -155,6 +147,9 @@ namespace Information_networks
         {   
             DataTable dataTable = (DataTable) gridView.DataSource;
             DataTable modifiedElements = new DataTable();
+            modifiedElements.Columns.Add("id");
+            modifiedElements.Columns.Add("username");
+            modifiedElements.Columns.Add("password");
             foreach(DataRow row in dataTable.Rows) 
             {
                 using (NpgsqlCommand command = new NpgsqlCommand(
@@ -167,17 +162,90 @@ namespace Information_networks
                     try
                     {
                         command.ExecuteNonQuery();
-                        //DataRow modifiedRow = new DataRow(row[0], row[1], row[2]);
-                        //modifiedElements.Rows.Add(modifiedRow);
+                        modifiedElements.Rows.Add(row.ItemArray);
                     }
                     // If already in DB
                     catch (NpgsqlException) { }
-                    finally
-                    {
-                        gridView.DataSource = modifiedElements;
-                    }
                 }
             }
+            gridView.DataSource = modifiedElements;
+        }
+        public void FillTreeView()
+        {
+            using (NpgsqlCommand command = new NpgsqlCommand(
+                "SELECT datname\n" +
+                "FROM pg_database\n" +
+                "WHERE datistemplate = false;", con))
+            using (NpgsqlDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    TreeNode node = new TreeNode(reader[0].ToString())
+                    {
+                        Tag = "database"
+                    };
+                    treeView.Nodes.Add(node);
+                }
+            }
+        }
+
+        private void TreeViewNodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            TreeNode current = e.Node;
+            if (current.Tag.ToString() == "database")
+            {
+                current.Nodes.Clear();
+                dbName = current.Text;
+                connString = $"Server={host}; Username={user}; Database={dbName}; Port={port}; Password={password}; SSLMode=Prefer";
+                con = new NpgsqlConnection(connString);
+                con.Open();
+                using (NpgsqlCommand command = new NpgsqlCommand(
+                    "SELECT table_name\n" +
+                    "FROM information_schema.tables\n" +
+                    "WHERE table_schema = 'public'\n" +
+                    "ORDER BY table_name;", con))
+                {
+                    NpgsqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        TreeNode node = new TreeNode(reader[0].ToString())
+                        {
+                            Tag = "table"
+                        };
+                        current.Nodes.Add(node);
+                    }
+                }
+                con.Close();
+            }
+            else
+            {
+                using (NpgsqlDataAdapter dataAdapter = new NpgsqlDataAdapter(
+                    string.Format("SELECT * FROM {0};", current.Text), con))
+                {
+                    DataTable dataTable = new DataTable();
+                    dataAdapter.Fill(dataTable);
+                    gridView.DataSource = dataTable;
+                }
+            }
+        }
+
+        private void BackupItemClick(object sender, EventArgs e)
+        {
+
+        }
+
+        private void DumpItemClick(object sender, EventArgs e)
+        {
+            var p = new Process
+            {
+                StartInfo =
+                {
+                    FileName = "SQL Shell (psql)",
+                    WorkingDirectory = @"C:\ProgramData\Microsoft\Windows\Start Menu\Programs\PostgreSQL 14",
+                    Arguments = ""
+                }
+            };
+            p.Start();
         }
     }
 }
