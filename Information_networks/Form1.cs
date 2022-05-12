@@ -152,6 +152,7 @@ namespace Information_networks
             modifiedElements.Columns.Add("id");
             modifiedElements.Columns.Add("username");
             modifiedElements.Columns.Add("password");
+            con.Open();
             foreach(DataRow row in dataTable.Rows) 
             {
                 using (NpgsqlCommand command = new NpgsqlCommand(
@@ -163,6 +164,7 @@ namespace Information_networks
                     command.Parameters.AddWithValue("p", row[2]);
                     try
                     {
+                        //con = new NpgsqlConnection()
                         command.ExecuteNonQuery();
                         modifiedElements.Rows.Add(row.ItemArray);
                     }
@@ -254,8 +256,7 @@ namespace Information_networks
                 }
 
                 StreamWriter sw = new StreamWriter("DBRestore.bat");
-                StringBuilder strSB = new StringBuilder($@"D:\postgreSQL\bin\pg_restore.exe -c -h {host} -p {port} -U {user} -d {dbName} {filePath}");
-
+                StringBuilder strSB = new StringBuilder($"\"C:\\Program Files\\PostgreSQL\\13\\bin\\pg_restore.exe\" -c -h {host} -p {port} -U {user} -d {dbName} {filePath}");
                 sw.WriteLine(strSB);
                 sw.Dispose();
                 sw.Close();
@@ -268,7 +269,6 @@ namespace Information_networks
             }
             catch (Exception) { }
         }
-
         private void DumpItemClick(object sender, EventArgs e)
         {
             try
@@ -295,7 +295,7 @@ namespace Information_networks
                 }
 
                 StreamWriter sw = new StreamWriter("DBBackup.bat");
-                string command = $@"C:\Program Files\PostgreSQL\14\bin\pg_dump.exe -h {host} -p {port} -U {user} -d {dbName} -F c -f {filePath}";
+                string command = $"\"C:\\Program Files\\PostgreSQL\\13\\bin\\pg_dump.exe\" -h {host} -p {port} -U {user} -d {dbName} -F c -f {filePath}";
 
                 sw.WriteLine(command);
                 sw.Dispose();
