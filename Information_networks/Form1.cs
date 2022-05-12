@@ -4,6 +4,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Data;
 using System.Diagnostics;
+using System.IO;
+using System.Text;
 
 namespace Information_networks
 {
@@ -219,8 +221,7 @@ namespace Information_networks
             }
             else
             {
-                using (NpgsqlDataAdapter dataAdapter = new NpgsqlDataAdapter(
-                    string.Format("SELECT * FROM {0};", current.Text), con))
+                using (NpgsqlDataAdapter dataAdapter = new NpgsqlDataAdapter($"SELECT * FROM {current.Text};", con))
                 {
                     DataTable dataTable = new DataTable();
                     dataAdapter.Fill(dataTable);
@@ -229,23 +230,84 @@ namespace Information_networks
             }
         }
 
-        private void BackupItemClick(object sender, EventArgs e)
+        private void RestoreItemClick(object sender, EventArgs e)
         {
+            try
+            {
+                string filePath = string.Empty;
+                OpenFileDialog objOpenFileDialog = new OpenFileDialog
+                {
+                    Title = "Восстановить БД",
+                    Filter = "Dump files|*.dump",
+                    RestoreDirectory = true
+                };
+                if (objOpenFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    filePath = objOpenFileDialog.FileName;
+                }
+                else return;
 
+                if (filePath == string.Empty)
+                {
+                    MessageBox.Show("Укажите путь файла восстановления");
+                    return;
+                }
+
+                StreamWriter sw = new StreamWriter("DBRestore.bat");
+                StringBuilder strSB = new StringBuilder($@"D:\postgreSQL\bin\pg_restore.exe -c -h {host} -p {port} -U {user} -d {dbName} {filePath}");
+
+                sw.WriteLine(strSB);
+                sw.Dispose();
+                sw.Close();
+                Process processDB = Process.Start("DBRestore.bat");
+                do { }
+                while (!processDB.HasExited);
+                {
+                    MessageBox.Show($"База данных {dbName} восстановлена из {filePath}");
+                }
+            }
+            catch (Exception) { }
         }
 
         private void DumpItemClick(object sender, EventArgs e)
         {
-            var p = new Process
+            try
             {
-                StartInfo =
+                string filePath = string.Empty;
+                SaveFileDialog saveFileDialog = new SaveFileDialog()
                 {
-                    FileName = "SQL Shell (psql)",
-                    WorkingDirectory = @"C:\ProgramData\Microsoft\Windows\Start Menu\Programs\PostgreSQL 14",
-                    Arguments = ""
+                    Title = "Сохранить БД",
+                    Filter = "Dump files|*.dump",
+                    FilterIndex = 0,
+                    RestoreDirectory = true,
+                    FileName = $"backup_{DateTime.Now:dd-MM-yyyy_HH-mm}"
+                };
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                    filePath = saveFileDialog.FileName;
+                else
+                    return;
+
+                if (filePath == string.Empty)
+                {
+                    MessageBox.Show("Укажите путь сохранения файла");
+                    return;
                 }
-            };
-            p.Start();
+
+                StreamWriter sw = new StreamWriter("DBBackup.bat");
+                string command = $@"C:\Program Files\PostgreSQL\14\bin\pg_dump.exe -h {host} -p {port} -U {user} -d {dbName} -F c -f {filePath}";
+
+                sw.WriteLine(command);
+                sw.Dispose();
+                sw.Close();
+                Process processDB = Process.Start("DBBackup.bat");
+                do { }
+                while (!processDB.HasExited);
+                {
+                    MessageBox.Show($"База данных {dbName} сохранена. Имя файла - {filePath}");
+                }
+            }
+            catch (Exception) { }
         }
     }
 }

@@ -48,7 +48,7 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.dumpItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.backupItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.restoreItem = new System.Windows.Forms.ToolStripMenuItem();
             this.passwordTextBox = new CueTextBox();
             this.serverPortTextBox = new CueTextBox();
             this.serverAdressTextBox = new CueTextBox();
@@ -239,7 +239,7 @@
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.dumpItem,
-            this.backupItem});
+            this.restoreItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Size = new System.Drawing.Size(764, 24);
@@ -253,12 +253,12 @@
             this.dumpItem.Text = "Сохранить";
             this.dumpItem.Click += new System.EventHandler(this.DumpItemClick);
             // 
-            // backupItem
+            // restoreItem
             // 
-            this.backupItem.Name = "backupItem";
-            this.backupItem.Size = new System.Drawing.Size(94, 20);
-            this.backupItem.Text = "Восстановить";
-            this.backupItem.Click += new System.EventHandler(this.BackupItemClick);
+            this.restoreItem.Name = "restoreItem";
+            this.restoreItem.Size = new System.Drawing.Size(94, 20);
+            this.restoreItem.Text = "Восстановить";
+            this.restoreItem.Click += new System.EventHandler(this.RestoreItemClick);
             // 
             // passwordTextBox
             // 
@@ -364,7 +364,7 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.MenuStrip menuStrip;
         private System.Windows.Forms.ToolStripMenuItem dumpItem;
-        private System.Windows.Forms.ToolStripMenuItem backupItem;
+        private System.Windows.Forms.ToolStripMenuItem restoreItem;
     }
 }
 
