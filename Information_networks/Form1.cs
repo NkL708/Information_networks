@@ -18,6 +18,7 @@ namespace Information_networks
         private static readonly string password = "hugelong123";
         private static string connString;
         private static NpgsqlConnection con;
+        private static NpgsqlConnection treeCon;
 
         public Form1()
         {
@@ -152,7 +153,6 @@ namespace Information_networks
             modifiedElements.Columns.Add("id");
             modifiedElements.Columns.Add("username");
             modifiedElements.Columns.Add("password");
-            con.Open();
             foreach(DataRow row in dataTable.Rows) 
             {
                 using (NpgsqlCommand command = new NpgsqlCommand(
@@ -196,18 +196,18 @@ namespace Information_networks
         private void TreeViewNodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             TreeNode current = e.Node;
+            current.Nodes.Clear();
             if (current.Tag.ToString() == "database")
             {
-                current.Nodes.Clear();
                 dbName = current.Text;
                 connString = $"Server={host}; Username={user}; Database={dbName}; Port={port}; Password={password}; SSLMode=Prefer";
-                con = new NpgsqlConnection(connString);
-                con.Open();
+                treeCon = new NpgsqlConnection(connString);
+                treeCon.Open();
                 using (NpgsqlCommand command = new NpgsqlCommand(
                     "SELECT table_name\n" +
                     "FROM information_schema.tables\n" +
                     "WHERE table_schema = 'public'\n" +
-                    "ORDER BY table_name;", con))
+                    "ORDER BY table_name;", treeCon))
                 {
                     NpgsqlDataReader reader = command.ExecuteReader();
                     while (reader.Read())
@@ -219,11 +219,14 @@ namespace Information_networks
                         current.Nodes.Add(node);
                     }
                 }
-                con.Close();
             }
             else
             {
-                using (NpgsqlDataAdapter dataAdapter = new NpgsqlDataAdapter($"SELECT * FROM {current.Text};", con))
+                dbName = current.Parent.Text;
+                connString = $"Server={host}; Username={user}; Database={dbName}; Port={port}; Password={password}; SSLMode=Prefer";
+                treeCon = new NpgsqlConnection(connString);
+                treeCon.Open();
+                using (NpgsqlDataAdapter dataAdapter = new NpgsqlDataAdapter($"SELECT * FROM {current.Text};", treeCon))
                 {
                     DataTable dataTable = new DataTable();
                     dataAdapter.Fill(dataTable);
