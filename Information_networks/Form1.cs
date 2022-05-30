@@ -16,8 +16,9 @@ namespace Information_networks
         private static string dbName = "InformationNetworks";
         private static string port = "5432";
         private static readonly string password = "hugelong123";
-        private static string connString;
+        private static string conString;
         private static NpgsqlConnection con;
+        private static string conTreeString;
         private static NpgsqlConnection treeCon;
 
         public Form1()
@@ -37,8 +38,8 @@ namespace Information_networks
         {
             host = serverAdressTextBox.Text;
             port = serverPortTextBox.Text;
-            connString = $"Server={host}; Username={user}; Database={dbName}; Port={port}; Password={password}; SSLMode=Prefer";
-            con = new NpgsqlConnection(connString);
+            conString = $"Server={host}; Username={user}; Database={dbName}; Port={port}; Password={password}; SSLMode=Prefer";
+            con = new NpgsqlConnection(conString);
             con.Open();
             FillTreeView();
             connectionLabel.Text = "Подключено";
@@ -200,8 +201,8 @@ namespace Information_networks
             if (current.Tag.ToString() == "database")
             {
                 dbName = current.Text;
-                connString = $"Server={host}; Username={user}; Database={dbName}; Port={port}; Password={password}; SSLMode=Prefer";
-                treeCon = new NpgsqlConnection(connString);
+                conTreeString = $"Server={host}; Username={user}; Database={dbName}; Port={port}; Password={password}; SSLMode=Prefer";
+                treeCon = new NpgsqlConnection(conTreeString);
                 treeCon.Open();
                 using (NpgsqlCommand command = new NpgsqlCommand(
                     "SELECT table_name\n" +
@@ -223,8 +224,8 @@ namespace Information_networks
             else
             {
                 dbName = current.Parent.Text;
-                connString = $"Server={host}; Username={user}; Database={dbName}; Port={port}; Password={password}; SSLMode=Prefer";
-                treeCon = new NpgsqlConnection(connString);
+                conTreeString = $"Server={host}; Username={user}; Database={dbName}; Port={port}; Password={password}; SSLMode=Prefer";
+                treeCon = new NpgsqlConnection(conTreeString);
                 treeCon.Open();
                 using (NpgsqlDataAdapter dataAdapter = new NpgsqlDataAdapter($"SELECT * FROM {current.Text};", treeCon))
                 {
