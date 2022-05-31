@@ -2,6 +2,7 @@
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Npgsql;
 
@@ -72,77 +73,34 @@ namespace RGZ
 
         private void UpdateTableButtonClick(object sender, EventArgs e)
         {
-            //DataTable table = (DataTable)dataGridView.DataSource;
-            //if (table == null)
-            //    return;
-            //DataTable newTable = new DataTable();
-            //string colsStr = "";
-            //// Getting parameters
-            //foreach (DataColumn column in table.Columns)
-            //{
-            //    if (column.ColumnName == "id")
-            //        continue;
-            //    newTable.Columns.Add(column.ColumnName);
-            //    colsStr += $"{column}, ";
-            //}
-            //// Removing last ","
-            //colsStr = colsStr.Remove(colsStr.Length - 2);
-            //foreach (DataRow row in table.Rows)
-            //{
-            //    string valuesStr = "";
-            //    // Parsing datetime
-            //    int i = 0;
-            //    foreach (object cell in row.ItemArray)
-            //    {
-            //        if (table.Columns[i].ColumnName == "id")
-            //        {
-            //            i++;
-            //            continue;
-            //        }
-            //        bool isDate = DateTime.TryParse(cell.ToString(), out DateTime date);
-            //        if (isDate)
-            //            valuesStr += $"@{date:yyyy-MM-dd}, ";
-            //        else
-            //            valuesStr += $"@{cell}, ";
-            //        i++;
-            //    }
-            //    valuesStr = valuesStr.Remove(valuesStr.Length - 2);
-            //    using (NpgsqlCommand command = new NpgsqlCommand(
-            //        $"INSERT INTO {currentTable}({colsStr})\n" +
-            //        $"VALUES({valuesStr});", connection))
-            //    {
-            //        // Set parameters for SQL query
-            //        string[] cols = colsStr.Split();
-            //        string[] values = valuesStr.Split();
-            //        var colsAndValues = cols.Zip(values, (c, v) => new { Col = c, Value = v });
-            //        foreach (var cv in colsAndValues)
-            //        {
-            //            if (cv.Col.Contains(",") || cv.Value.Contains(","))
-            //                command.Parameters.AddWithValue(cv.Col.Trim(','), cv.Value.Trim(','));
-            //            else
-            //                command.Parameters.AddWithValue(cv.Col, cv.Value);
-            //        }
-            //        try
-            //        {
-            //            Debug.WriteLine($"{command.CommandText}\n");
-            //            command.ExecuteNonQuery();
-            //            newTable.Rows.Add(row.ItemArray);
-            //        }
-            //        // If already in DB
-            //        catch (NpgsqlException) { }
-            //    }
-            //}
-            //dataGridView.DataSource = newTable;
-
             DataTable table = (DataTable) dataGridView.DataSource;
-            DataTable newTable = new DataTable();
             if (currentTable == null)
                 return;
             if (currentTable == "teachers")
             {
-                foreach (DataColumn column in table.Columns)
+                foreach (DataRow row in table.Rows)
                 {
+                    using (NpgsqlCommand command = new NpgsqlCommand(
+                        "INSERT INTO teachers(id, last_name, first_name,\n" +
+                        "patronymic, department_name, employment_date)\n" +
+                        "VALUES (@id, @ln, @fn, @p, @dn, @ed);", connection))
+                    {
+                        command.Parameters.AddWithValue("id", row[0]);
+                        command.Parameters.AddWithValue("ln", row[1]);
+                        command.Parameters.AddWithValue("fn", row[2]);
+                        command.Parameters.AddWithValue("p", row[3]);
+                        command.Parameters.AddWithValue("dn", row[4]);
+                        command.Parameters.AddWithValue("ed", row[5]);
+                        try
+                        {
+                            command.ExecuteNonQuery();
+                        }
+                        // Already in db
+                        catch(NpgsqlException) 
+                        {
 
+                        }
+                    }
                 }
             }
             if (currentTable == "disciplines")
