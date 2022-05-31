@@ -72,54 +72,87 @@ namespace RGZ
 
         private void UpdateTableButtonClick(object sender, EventArgs e)
         {
-            DataTable table = (DataTable)dataGridView.DataSource;
-            if (table == null)
-                return;
+            //DataTable table = (DataTable)dataGridView.DataSource;
+            //if (table == null)
+            //    return;
+            //DataTable newTable = new DataTable();
+            //string colsStr = "";
+            //// Getting parameters
+            //foreach (DataColumn column in table.Columns)
+            //{
+            //    if (column.ColumnName == "id")
+            //        continue;
+            //    newTable.Columns.Add(column.ColumnName);
+            //    colsStr += $"{column}, ";
+            //}
+            //// Removing last ","
+            //colsStr = colsStr.Remove(colsStr.Length - 2);
+            //foreach (DataRow row in table.Rows)
+            //{
+            //    string valuesStr = "";
+            //    // Parsing datetime
+            //    int i = 0;
+            //    foreach (object cell in row.ItemArray)
+            //    {
+            //        if (table.Columns[i].ColumnName == "id")
+            //        {
+            //            i++;
+            //            continue;
+            //        }
+            //        bool isDate = DateTime.TryParse(cell.ToString(), out DateTime date);
+            //        if (isDate)
+            //            valuesStr += $"@{date:yyyy-MM-dd}, ";
+            //        else
+            //            valuesStr += $"@{cell}, ";
+            //        i++;
+            //    }
+            //    valuesStr = valuesStr.Remove(valuesStr.Length - 2);
+            //    using (NpgsqlCommand command = new NpgsqlCommand(
+            //        $"INSERT INTO {currentTable}({colsStr})\n" +
+            //        $"VALUES({valuesStr});", connection))
+            //    {
+            //        // Set parameters for SQL query
+            //        string[] cols = colsStr.Split();
+            //        string[] values = valuesStr.Split();
+            //        var colsAndValues = cols.Zip(values, (c, v) => new { Col = c, Value = v });
+            //        foreach (var cv in colsAndValues)
+            //        {
+            //            if (cv.Col.Contains(",") || cv.Value.Contains(","))
+            //                command.Parameters.AddWithValue(cv.Col.Trim(','), cv.Value.Trim(','));
+            //            else
+            //                command.Parameters.AddWithValue(cv.Col, cv.Value);
+            //        }
+            //        try
+            //        {
+            //            Debug.WriteLine($"{command.CommandText}\n");
+            //            command.ExecuteNonQuery();
+            //            newTable.Rows.Add(row.ItemArray);
+            //        }
+            //        // If already in DB
+            //        catch (NpgsqlException) { }
+            //    }
+            //}
+            //dataGridView.DataSource = newTable;
+
+            DataTable table = (DataTable) dataGridView.DataSource;
             DataTable newTable = new DataTable();
-            string colsStr = "";
-            foreach (DataColumn column in table.Columns)
+            if (currentTable == null)
+                return;
+            if (currentTable == "teachers")
             {
-                newTable.Columns.Add(column.ColumnName);
-                colsStr += $"@{column}, ";
-            }
-            colsStr = colsStr.Remove(colsStr.Length - 2);
-            foreach (DataRow row in table.Rows)
-            {
-                string valuesStr = "";
-                foreach (object cell in row.ItemArray)
+                foreach (DataColumn column in table.Columns)
                 {
-                    bool isDate = DateTime.TryParse(cell.ToString(), out DateTime date);
-                    if (isDate)
-                        valuesStr += $"{date:yyyy-MM-dd}, ";
-                    else
-                        valuesStr += $"{cell}, ";
-                }
-                valuesStr = valuesStr.Remove(valuesStr.Length - 2);
-                using (NpgsqlCommand command = new NpgsqlCommand(
-                    $"INSERT INTO {currentTable}({colsStr})\n" +
-                    $"VALUES({valuesStr});", connection))
-                {
-                    string[] cols = colsStr.Split();
-                    string[] values = valuesStr.Split();
-                    var colsAndValues = cols.Zip(values, (c, v) => new { Col = c, Value = v });
-                    foreach (var cv in colsAndValues)
-                    {
-                        if (cv.Col.Contains(",") || cv.Value.Contains(","))
-                            command.Parameters.AddWithValue(cv.Col.Trim(','), cv.Value.Trim(','));
-                        else
-                            command.Parameters.AddWithValue(cv.Col, cv.Value);
-                    }
-                    try
-                    {
-                        Debug.WriteLine($"{command.CommandText}\n");
-                        command.ExecuteNonQuery();
-                        newTable.Rows.Add(row.ItemArray);
-                    }
-                    // If already in DB
-                    catch (NpgsqlException) { }
+
                 }
             }
-            dataGridView.DataSource = newTable;
+            if (currentTable == "disciplines")
+            {
+
+            }
+            if (currentTable == "department_disciplines")
+            {
+
+            }
         }
     }
 }
