@@ -80,7 +80,7 @@ namespace Information_networks
             {
                 while (reader.Read())
                 {
-                    String user = reader[0].ToString() + "\t" +
+                    string user = reader[0].ToString() + "\t" +
                         reader[1].ToString() + "\t\t" + reader[2].ToString() + "\n";
                     tableView.Text += user;
                 }
@@ -89,7 +89,7 @@ namespace Information_networks
 
         private void InsertButtonClick(object sender, EventArgs e)
         {
-            if (!String.IsNullOrEmpty(loginTextBox.Text) && !String.IsNullOrEmpty(passwordTextBox.Text))
+            if (!string.IsNullOrEmpty(loginTextBox.Text) && !string.IsNullOrEmpty(passwordTextBox.Text))
             {
                 using (NpgsqlCommand command = new NpgsqlCommand("SELECT insert_user(@u, @p);", con))
                 {
@@ -107,7 +107,7 @@ namespace Information_networks
 
         private void DeleteButtonClick(object sender, EventArgs e)
         {
-            if (!String.IsNullOrEmpty(loginTextBox.Text) && !String.IsNullOrEmpty(passwordTextBox.Text))
+            if (!string.IsNullOrEmpty(loginTextBox.Text) && !string.IsNullOrEmpty(passwordTextBox.Text))
             {
                 using (NpgsqlCommand command = new NpgsqlCommand("SELECT delete_user(@u, @p);", con))
                 {

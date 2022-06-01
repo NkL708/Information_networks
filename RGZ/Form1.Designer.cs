@@ -34,8 +34,8 @@
             this.departmentDisciplinesButton = new System.Windows.Forms.Button();
             this.teachersOfDisciplineButton = new System.Windows.Forms.Button();
             this.teacherReferenceButton = new System.Windows.Forms.Button();
-            this.teacherIdtextBox = new System.Windows.Forms.TextBox();
-            this.disciplineIdtextBox = new System.Windows.Forms.TextBox();
+            this.teacherIdTextBox = new System.Windows.Forms.TextBox();
+            this.disciplineIdTextBox = new System.Windows.Forms.TextBox();
             this.updateTableButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.SuspendLayout();
@@ -87,10 +87,11 @@
             this.teachersOfDisciplineButton.BackColor = System.Drawing.Color.Aqua;
             this.teachersOfDisciplineButton.Location = new System.Drawing.Point(12, 298);
             this.teachersOfDisciplineButton.Name = "teachersOfDisciplineButton";
-            this.teachersOfDisciplineButton.Size = new System.Drawing.Size(156, 23);
+            this.teachersOfDisciplineButton.Size = new System.Drawing.Size(167, 23);
             this.teachersOfDisciplineButton.TabIndex = 4;
             this.teachersOfDisciplineButton.Text = "Преподаватели дисциплины";
             this.teachersOfDisciplineButton.UseVisualStyleBackColor = false;
+            this.teachersOfDisciplineButton.Click += new System.EventHandler(this.TeachersOfDisciplineButtonClick);
             // 
             // teacherReferenceButton
             // 
@@ -101,20 +102,21 @@
             this.teacherReferenceButton.TabIndex = 5;
             this.teacherReferenceButton.Text = "Справка по преподавателю";
             this.teacherReferenceButton.UseVisualStyleBackColor = false;
+            this.teacherReferenceButton.Click += new System.EventHandler(this.TeacherReferenceButtonClick);
             // 
-            // teacherIdtextBox
+            // teacherIdTextBox
             // 
-            this.teacherIdtextBox.Location = new System.Drawing.Point(12, 256);
-            this.teacherIdtextBox.Name = "teacherIdtextBox";
-            this.teacherIdtextBox.Size = new System.Drawing.Size(156, 20);
-            this.teacherIdtextBox.TabIndex = 6;
+            this.teacherIdTextBox.Location = new System.Drawing.Point(12, 256);
+            this.teacherIdTextBox.Name = "teacherIdTextBox";
+            this.teacherIdTextBox.Size = new System.Drawing.Size(156, 20);
+            this.teacherIdTextBox.TabIndex = 6;
             // 
-            // disciplineIdtextBox
+            // disciplineIdTextBox
             // 
-            this.disciplineIdtextBox.Location = new System.Drawing.Point(12, 327);
-            this.disciplineIdtextBox.Name = "disciplineIdtextBox";
-            this.disciplineIdtextBox.Size = new System.Drawing.Size(156, 20);
-            this.disciplineIdtextBox.TabIndex = 7;
+            this.disciplineIdTextBox.Location = new System.Drawing.Point(12, 327);
+            this.disciplineIdTextBox.Name = "disciplineIdTextBox";
+            this.disciplineIdTextBox.Size = new System.Drawing.Size(156, 20);
+            this.disciplineIdTextBox.TabIndex = 7;
             // 
             // updateTableButton
             // 
@@ -134,8 +136,8 @@
             this.BackColor = System.Drawing.Color.Lime;
             this.ClientSize = new System.Drawing.Size(799, 362);
             this.Controls.Add(this.updateTableButton);
-            this.Controls.Add(this.disciplineIdtextBox);
-            this.Controls.Add(this.teacherIdtextBox);
+            this.Controls.Add(this.disciplineIdTextBox);
+            this.Controls.Add(this.teacherIdTextBox);
             this.Controls.Add(this.teacherReferenceButton);
             this.Controls.Add(this.teachersOfDisciplineButton);
             this.Controls.Add(this.departmentDisciplinesButton);
@@ -158,8 +160,8 @@
         private System.Windows.Forms.Button departmentDisciplinesButton;
         private System.Windows.Forms.Button teachersOfDisciplineButton;
         private System.Windows.Forms.Button teacherReferenceButton;
-        private System.Windows.Forms.TextBox teacherIdtextBox;
-        private System.Windows.Forms.TextBox disciplineIdtextBox;
+        private System.Windows.Forms.TextBox teacherIdTextBox;
+        private System.Windows.Forms.TextBox disciplineIdTextBox;
         private System.Windows.Forms.Button updateTableButton;
     }
 }
