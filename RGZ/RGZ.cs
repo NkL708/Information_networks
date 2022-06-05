@@ -5,7 +5,7 @@ using Npgsql;
 
 namespace RGZ
 {
-    public partial class Form1 : Form
+    public partial class RGZ : Form
     {
         private static readonly string host = "localhost";
         private static readonly string user = "postgres";
@@ -16,7 +16,7 @@ namespace RGZ
         private static NpgsqlConnection connection;
         private static string currentTable;
 
-        public Form1()
+        public RGZ()
         {
             InitializeComponent();
             Connect();
@@ -70,10 +70,13 @@ namespace RGZ
 
         private void UpdateTableButtonClick(object sender, EventArgs e)
         {
-            DataTable table = (DataTable) dataGridView.DataSource;
+            
+            ClearDBTable(currentTable);
             if (currentTable == null)
                 return;
-            ClearDBTable(currentTable);
+            if (dataGridView.Rows.Count == 0)
+                return;
+            DataTable table = (DataTable)dataGridView.DataSource;
             if (currentTable == "teachers")
             {
                 foreach (DataRow row in table.Rows)

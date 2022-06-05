@@ -1,6 +1,6 @@
 ﻿namespace RGZ
 {
-    partial class Form1
+    partial class RGZ
     {
         /// <summary>
         /// Обязательная переменная конструктора.

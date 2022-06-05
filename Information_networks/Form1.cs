@@ -1,11 +1,11 @@
-﻿using Npgsql;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using Npgsql;
 
 namespace Information_networks
 {
@@ -25,7 +25,6 @@ namespace Information_networks
         {
             InitializeComponent();
         }
-
         private void InitButtonClick(object sender, EventArgs e)
         {
             openSessionButton.Enabled = true;
@@ -33,7 +32,6 @@ namespace Information_networks
             serverAdressTextBox.Enabled = true;
             serverPortTextBox.Enabled = true;
         }
-
         private void OpenSessionButtonClick(object sender, EventArgs e)
         {
             host = serverAdressTextBox.Text;
@@ -53,7 +51,6 @@ namespace Information_networks
             executeSqlButton.Enabled = true;
             updateDBButton.Enabled = true;
         }
-
         private void CloseSessionButtonClick(object sender, EventArgs e)
         {
             // Close connection
@@ -64,12 +61,6 @@ namespace Information_networks
             connectionLabel.Text = "Не подключено";
             connectionLabel.ForeColor = Color.Red;
         }
-
-        private void ExecuteButtonClick(object sender, EventArgs e)
-        {
-            // What is here?
-        }
-
         private void ViewButtonClick(object sender, EventArgs e)
         {
             tableView.Clear();
@@ -86,7 +77,6 @@ namespace Information_networks
                 }
             }
         }
-
         private void InsertButtonClick(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(loginTextBox.Text) && !string.IsNullOrEmpty(passwordTextBox.Text))
@@ -104,7 +94,6 @@ namespace Information_networks
                 incorrectFields.Visible = true;
             }
         }
-
         private void DeleteButtonClick(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(loginTextBox.Text) && !string.IsNullOrEmpty(passwordTextBox.Text))
@@ -122,7 +111,6 @@ namespace Information_networks
                 incorrectFields.Visible = true;
             }
         }
-
         private void ShowFunctionsButtonClick(object sender, EventArgs e)
         {
             using (NpgsqlDataAdapter adapter = new NpgsqlDataAdapter(
@@ -136,7 +124,6 @@ namespace Information_networks
                 gridView.DataSource = dataTable;
             }
         }
-
         private void ExecuteSqlButtonClick(object sender, EventArgs e)
         {
             using (NpgsqlDataAdapter dataAdapter = new NpgsqlDataAdapter(sqlText.Text, con))
@@ -146,15 +133,13 @@ namespace Information_networks
                 gridView.DataSource = dataTable;
             }
         }
-
         private void UpdateDBButtonClick(object sender, EventArgs e)
         {   
             DataTable dataTable = (DataTable) gridView.DataSource;
-            DataTable modifiedElements = new DataTable();
-            modifiedElements.Columns.Add("id");
-            modifiedElements.Columns.Add("username");
-            modifiedElements.Columns.Add("password");
-            foreach(DataRow row in dataTable.Rows) 
+            ClearDBTable("users");
+            if (gridView.Rows.Count == 0)
+                return;
+            foreach (DataRow row in dataTable.Rows) 
             {
                 using (NpgsqlCommand command = new NpgsqlCommand(
                     "INSERT INTO users(id, username, password)" +
@@ -163,17 +148,9 @@ namespace Information_networks
                     command.Parameters.AddWithValue("i", row[0]);
                     command.Parameters.AddWithValue("u", row[1]);
                     command.Parameters.AddWithValue("p", row[2]);
-                    try
-                    {
-                        //con = new NpgsqlConnection()
-                        command.ExecuteNonQuery();
-                        modifiedElements.Rows.Add(row.ItemArray);
-                    }
-                    // If already in DB
-                    catch (NpgsqlException) { }
+                    command.ExecuteNonQuery();
                 }
             }
-            gridView.DataSource = modifiedElements;
         }
         public void FillTreeView()
         {
@@ -193,7 +170,6 @@ namespace Information_networks
                 }
             }
         }
-
         private void TreeViewNodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             TreeNode current = e.Node;
@@ -235,7 +211,6 @@ namespace Information_networks
                 }
             }
         }
-
         private void RestoreItemClick(object sender, EventArgs e)
         {
             try
@@ -251,7 +226,8 @@ namespace Information_networks
                 {
                     filePath = objOpenFileDialog.FileName;
                 }
-                else return;
+                else
+                    return;
 
                 if (filePath == string.Empty)
                 {
@@ -312,6 +288,14 @@ namespace Information_networks
                 }
             }
             catch (Exception) { }
+        }
+        private static void ClearDBTable(string tableName)
+        {
+            using (NpgsqlCommand command = new NpgsqlCommand(
+                $"DELETE FROM {tableName};", con))
+            {
+                command.ExecuteNonQuery();
+            }
         }
     }
 }
