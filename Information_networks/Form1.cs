@@ -139,7 +139,7 @@ namespace Information_networks
             ClearDBTable("users");
             if (gridView.Rows.Count == 0)
                 return;
-            foreach (DataRow row in dataTable.Rows) 
+            foreach (DataRow row in dataTable.Rows)
             {
                 using (NpgsqlCommand command = new NpgsqlCommand(
                     "INSERT INTO users(id, username, password)" +
