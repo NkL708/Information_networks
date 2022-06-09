@@ -18,6 +18,7 @@ namespace Information_networks
         private static readonly string password = "hugelong123";
         private static string conString;
         private static NpgsqlConnection con;
+        // Lab 6
         private static string conTreeString;
         private static NpgsqlConnection treeCon;
 
@@ -25,6 +26,7 @@ namespace Information_networks
         {
             InitializeComponent();
         }
+        // Lab 1
         private void InitButtonClick(object sender, EventArgs e)
         {
             openSessionButton.Enabled = true;
@@ -61,6 +63,7 @@ namespace Information_networks
             connectionLabel.Text = "Не подключено";
             connectionLabel.ForeColor = Color.Red;
         }
+        // Lab 2
         private void ViewButtonClick(object sender, EventArgs e)
         {
             tableView.Clear();
@@ -77,6 +80,7 @@ namespace Information_networks
                 }
             }
         }
+        // Lab 3
         private void InsertButtonClick(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(loginTextBox.Text) && !string.IsNullOrEmpty(passwordTextBox.Text))
@@ -124,13 +128,23 @@ namespace Information_networks
                 gridView.DataSource = dataTable;
             }
         }
+        // Lab 4
         private void ExecuteSqlButtonClick(object sender, EventArgs e)
         {
             using (NpgsqlDataAdapter dataAdapter = new NpgsqlDataAdapter(sqlText.Text, con))
-            {   
+            {
                 DataTable dataTable = new DataTable();
                 dataAdapter.Fill(dataTable);
                 gridView.DataSource = dataTable;
+            }
+        }
+        // Lab 5
+        private static void ClearDBTable(string tableName)
+        {
+            using (NpgsqlCommand command = new NpgsqlCommand(
+                $"DELETE FROM {tableName};", con))
+            {
+                command.ExecuteNonQuery();
             }
         }
         private void UpdateDBButtonClick(object sender, EventArgs e)
@@ -152,6 +166,7 @@ namespace Information_networks
                 }
             }
         }
+        // Lab 6
         public void FillTreeView()
         {
             using (NpgsqlCommand command = new NpgsqlCommand(
@@ -211,6 +226,7 @@ namespace Information_networks
                 }
             }
         }
+        // Lab 7
         private void RestoreItemClick(object sender, EventArgs e)
         {
             try
@@ -288,14 +304,6 @@ namespace Information_networks
                 }
             }
             catch (Exception) { }
-        }
-        private static void ClearDBTable(string tableName)
-        {
-            using (NpgsqlCommand command = new NpgsqlCommand(
-                $"DELETE FROM {tableName};", con))
-            {
-                command.ExecuteNonQuery();
-            }
         }
     }
 }
