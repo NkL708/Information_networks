@@ -155,6 +155,8 @@ namespace Information_networks
                 return;
             foreach (DataRow row in dataTable.Rows)
             {
+                if (row.RowState == DataRowState.Deleted)
+                    continue;
                 using (NpgsqlCommand command = new NpgsqlCommand(
                     "INSERT INTO users(id, username, password)" +
                     "VALUES(@i, @u, @p);", con))

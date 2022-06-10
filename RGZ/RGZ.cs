@@ -81,6 +81,8 @@ namespace RGZ
             {
                 foreach (DataRow row in table.Rows)
                 {
+                    if (row.RowState == DataRowState.Deleted)
+                        continue;
                     using (NpgsqlCommand command = new NpgsqlCommand(
                         "INSERT INTO teachers(id, last_name, first_name, \n" +
                         "patronymic, department_name, employment_date)\n" +
@@ -100,6 +102,8 @@ namespace RGZ
             {
                 foreach (DataRow row in table.Rows)
                 {
+                    if (row.RowState == DataRowState.Deleted)
+                        continue;
                     using (NpgsqlCommand command = new NpgsqlCommand(
                         "INSERT INTO disciplines(id, name, speciality, semester)\n" +
                         "VALUES (@id, @n, @sp, @se);", connection))
@@ -116,6 +120,8 @@ namespace RGZ
             {
                 foreach (DataRow row in table.Rows)
                 {
+                    if (row.RowState == DataRowState.Deleted)
+                        continue;
                     using (NpgsqlCommand command = new NpgsqlCommand(
                         "INSERT INTO department_disciplines(id, \n" +
                         "teacher_id, discipline_id, hours_count)\n" +
